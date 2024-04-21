@@ -6,7 +6,6 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private Camera playerCamera;
 
     private Animation anim;
-    
     private Vector3 pointToGo;
     
     private void Start()
@@ -62,5 +61,10 @@ public class PlayerScript : MonoBehaviour
         {
             anim.CrossFade("Idle");
         }
+    }
+
+    private void Audio()
+    {
+        
     }
 }
