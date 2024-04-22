@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 
 public class SceneManager : MonoBehaviour
@@ -13,6 +14,10 @@ public class SceneManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
         }
     }
 
@@ -32,6 +37,14 @@ public class SceneManager : MonoBehaviour
                 LoadMyScene("GameScene");
             }
         }
+        else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.Contains("Game"))
+        {
+            if (GameManager.Instance.matchIsOver && Touch())
+            {
+                UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("GameScene");
+                LoadMyScene("MenuScene");
+            }
+        }
     }
 
     private bool Touch()
@@ -40,7 +53,7 @@ public class SceneManager : MonoBehaviour
         {
             Touch touch = Input.GetTouch(0);
 
-            if (touch.phase == TouchPhase.Ended)
+            if (touch.phase == TouchPhase.Began)
             {
                 return true;
             }

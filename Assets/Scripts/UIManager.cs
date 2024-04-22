@@ -7,6 +7,8 @@ public class UIManager : MonoBehaviour
     
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI collectionText;
+    [SerializeField] private GameObject gameOverScreen;
+    [SerializeField] private GameObject victoryScreen;
 
     private void Awake()
     {
@@ -14,11 +16,8 @@ public class UIManager : MonoBehaviour
         {
             Instance = this;
         }
-    }
-
-    private void Update()
-    {
-        
+        SetGameOverScreenIsActive(false);
+        SetVictoryScreenIsActive(false);
     }
 
     public void SetTimerText(int minutes, int seconds)
@@ -29,5 +28,15 @@ public class UIManager : MonoBehaviour
     public void SetCollectionText(int collectedNumber, int toBeCollectedNumber)
     {
         collectionText.text = collectedNumber.ToString() + "/" + toBeCollectedNumber;
+    }
+    
+    public void SetGameOverScreenIsActive(bool isActive)
+    {
+        gameOverScreen.SetActive(isActive);
+    }
+
+    public void SetVictoryScreenIsActive(bool isActive)
+    {
+        victoryScreen.SetActive(isActive);
     }
 }

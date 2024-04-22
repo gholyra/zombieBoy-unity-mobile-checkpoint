@@ -1,15 +1,17 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     
-    [SerializeField] private float matchTime;
+    [FormerlySerializedAs("matchTime")] [SerializeField] private float matchTimeInSeconds; 
     [SerializeField] private int pumpkinsToBeCollected = 30;
     [SerializeField] private GameObject pumpkin;
     
     public int pumpkinsCollected { get; set; }
+    public bool matchIsOver { get; private set; }
 
     private int matchTimeMinutes;
     private int matchTimeSeconds;
@@ -20,6 +22,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
         }
+        Time.timeScale = 1;
     }
 
     private void Start()
@@ -30,40 +33,49 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         UIManager.Instance.SetTimerText(matchTimeMinutes, matchTimeSeconds);
-        matchTime -= 1f * Time.deltaTime;
+        matchTimeInSeconds -= 1f * Time.deltaTime;
         
         UIManager.Instance.SetCollectionText(pumpkinsCollected, pumpkinsToBeCollected);
+        
+        CheckMatchStatus();
     }
 
-    private void GameOver()
+    private void CheckMatchStatus()
     {
-        if (matchTime <= 0f)
+        if (matchTimeInSeconds < 1f)
         {
-            if (pumpkinsCollected == pumpkinsToBeCollected)
+            matchIsOver = true;
+            Time.timeScale = 0;
+            if (pumpkinsCollected >= pumpkinsToBeCollected)
             {
                 // GANHOU!
+                UIManager.Instance.SetVictoryScreenIsActive(true);
+                UIManager.Instance.SetGameOverScreenIsActive(false);
             }
             else
             {
                 // PERDEU!
+                UIManager.Instance.SetGameOverScreenIsActive(true);
+                UIManager.Instance.SetVictoryScreenIsActive(false);
             }
         }
     }
     
     private IEnumerator SpawnPumpkins()
     {
-        while (true)
+        yield return new WaitForSeconds(2.5f);
+        for (int i = 0; i < 20; i ++)
         {
-            yield return new WaitForSeconds(3f);
-            float posXRange = Random.Range(-25f, 25f);
-            float posZRange = Random.Range(-25f, 25f);
-            Instantiate(pumpkin, new Vector3(posXRange, 0f, posZRange), Quaternion.identity);
+            float posXRange = Random.Range(-20f, 20f);
+            float posZRange = Random.Range(-20f, 20f);
+            Instantiate(pumpkin, new Vector3(posXRange, 0f, posZRange), Quaternion.Euler(-90f, 0f, 0f));
         }
+        StartCoroutine(SpawnPumpkins());
     }
     
     private void OnGUI()
     {
-        matchTimeMinutes = Mathf.FloorToInt(matchTime / 60);
-        matchTimeSeconds = Mathf.FloorToInt(matchTime % 60);
+        matchTimeMinutes = Mathf.FloorToInt(matchTimeInSeconds / 60);
+        matchTimeSeconds = Mathf.FloorToInt(matchTimeInSeconds % 60);
     }
 }
