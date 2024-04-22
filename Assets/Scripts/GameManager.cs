@@ -7,9 +7,13 @@ public class GameManager : MonoBehaviour
     
     [SerializeField] private float matchTime;
     [SerializeField] private int pumpkinsToBeCollected = 30;
-
+    [SerializeField] private GameObject pumpkin;
+    
     public int pumpkinsCollected { get; set; }
 
+    private int matchTimeMinutes;
+    private int matchTimeSeconds;
+    
     private void Awake()
     {
         if (Instance == null)
@@ -20,12 +24,15 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(StartCounting());
+        StartCoroutine(SpawnPumpkins());
     }
 
     private void Update()
     {
-        UIManager.Instance.SetTimerText(matchTime);
+        UIManager.Instance.SetTimerText(matchTimeMinutes, matchTimeSeconds);
+        matchTime -= 1f * Time.deltaTime;
+        
+        UIManager.Instance.SetCollectionText(pumpkinsCollected, pumpkinsToBeCollected);
     }
 
     private void GameOver()
@@ -43,9 +50,20 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    private IEnumerator StartCounting()
+    private IEnumerator SpawnPumpkins()
     {
-        matchTime--;
-        yield return new WaitForSeconds(1f);
+        while (true)
+        {
+            yield return new WaitForSeconds(3f);
+            float posXRange = Random.Range(-25f, 25f);
+            float posZRange = Random.Range(-25f, 25f);
+            Instantiate(pumpkin, new Vector3(posXRange, 0f, posZRange), Quaternion.identity);
+        }
+    }
+    
+    private void OnGUI()
+    {
+        matchTimeMinutes = Mathf.FloorToInt(matchTime / 60);
+        matchTimeSeconds = Mathf.FloorToInt(matchTime % 60);
     }
 }

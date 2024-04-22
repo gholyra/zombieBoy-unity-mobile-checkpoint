@@ -15,6 +15,7 @@ public class CollectableScript : MonoBehaviour
         if (collision.collider.CompareTag("Player"))
         {
             GameManager.Instance.pumpkinsCollected++;
+            
             Destroy(this.gameObject);
         }
     }

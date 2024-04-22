@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -22,8 +21,13 @@ public class UIManager : MonoBehaviour
         
     }
 
-    public void SetTimerText(float value)
+    public void SetTimerText(int minutes, int seconds)
     {
-        timerText.text = value.ToString();
+        timerText.text = minutes.ToString("00") + ":" + seconds.ToString("00");
+    }
+
+    public void SetCollectionText(int collectedNumber, int toBeCollectedNumber)
+    {
+        collectionText.text = collectedNumber.ToString() + "/" + toBeCollectedNumber;
     }
 }
